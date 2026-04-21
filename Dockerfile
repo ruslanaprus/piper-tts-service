@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=builder /app/piper-service .
 
-RUN curl -fsSL https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz \
+RUN curl -fsSL https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_aarch64.tar.gz \
     | tar xz -C /usr/local/bin --strip-components=1
 
 RUN useradd -m piperuser && \
@@ -24,6 +24,6 @@ USER piperuser
 EXPOSE 5000
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-  CMD curl -f http://localhost:5001/tts || exit 1
+  CMD curl -fs http://localhost:5000/health || exit 1
 
 CMD ["./piper-service"]

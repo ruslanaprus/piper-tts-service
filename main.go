@@ -55,9 +55,10 @@ func ttsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	outputFile := filepath.Join(os.TempDir(), fmt.Sprintf("piper-%d.wav", time.Now().UnixNano()))
-	defer os.Remove(outputFile)
 
 	cmd := exec.Command("piper", "--model", voice.Model, "--config", voice.Config, "--output_file", outputFile)
+	cmd.Stderr = os.Stderr
+
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		http.Error(w, "Failed to start Piper", http.StatusInternalServerError)
@@ -76,6 +77,16 @@ func ttsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "audio/wav")
 	http.ServeFile(w, r, outputFile)
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		os.Remove(outputFile)
+	}()
+}
+
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
 
 func main() {
@@ -84,6 +95,8 @@ func main() {
 	}
 
 	http.HandleFunc("/tts", ttsHandler)
+	http.HandleFunc("/health", healthHandler)
+
 	log.Println("Piper TTS service running on :5000")
 	log.Fatal(http.ListenAndServe(":5000", nil))
 }
