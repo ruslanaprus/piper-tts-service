@@ -65,12 +65,15 @@ func ttsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		defer stdin.Close()
-		io.WriteString(stdin, req.Text)
-	}()
+	_, err = io.WriteString(stdin, req.Text)
+	if err != nil {
+		http.Error(w, "Failed to write to Piper", http.StatusInternalServerError)
+		return
+	}
+	stdin.Close()
 
 	if err := cmd.Run(); err != nil {
+		log.Printf("Piper execution failed: %v", err)
 		http.Error(w, "Piper execution failed", http.StatusInternalServerError)
 		return
 	}
