@@ -1,0 +1,44 @@
+# Binaries
+piper-service
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# Output of go build
+*.out
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# Dependency/vendor directories
+/vendor/
+
+# IDE/editor settings
+.idea/
+*.iml
+
+# OS-specific files
+.DS_Store
+
+# Coverage reports
+*.cover
+coverage.out
+
+# Build artifacts
+bin/
+dist/
+
+# Piper voice models (optional: if you don’t want to commit large binary files)
+voices/*.onnx
+voices/*.onnx.json

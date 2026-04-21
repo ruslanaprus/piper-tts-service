@@ -1,0 +1,35 @@
+# Ignore Git files
+.git
+.gitignore
+
+# Ignore local build artifacts
+bin/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Ignore logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# Ignore IDE/editor configs
+.idea/
+*.iml
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore coverage reports
+*.cover
+coverage.out
+
+# Ignore local voice models if you mount them at runtime
+voices/
