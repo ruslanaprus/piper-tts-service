@@ -22,8 +22,16 @@ type Voices map[string]VoiceConfig
 
 var voices Voices
 
+func getEnv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
 func loadVoices() error {
-	data, err := os.ReadFile("/app/voices/voices.json")
+	voicesPath := getEnv("VOICES_PATH", "/app/voices/voices.json")
+	data, err := os.ReadFile(voicesPath)
 	if err != nil {
 		return err
 	}
@@ -45,13 +53,16 @@ func ttsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	defaultLang := getEnv("DEFAULT_LANG", "en")
+
 	if req.Lang == "" {
-		req.Lang = "en"
+		req.Lang = defaultLang
 	}
 
 	voice, ok := voices[req.Lang]
 	if !ok {
-		voice = voices["en"]
+		log.Printf("No voice found for lang %q, falling back to default lang %q", req.Lang, defaultLang)
+		voice = voices[defaultLang]
 	}
 
 	outputFile := filepath.Join(os.TempDir(), fmt.Sprintf("piper-%d.wav", time.Now().UnixNano()))
